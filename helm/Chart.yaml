@@ -1,0 +1,5 @@
+apiVersion: v2
+name: blueprints-service
+description: A Helm chart for Bluebricks Blueprint Manager
+version: 0.1.0
+appVersion: 1.0.0

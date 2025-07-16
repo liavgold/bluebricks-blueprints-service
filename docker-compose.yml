@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  blueprints-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    command: npm run start
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bluebricks
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:

@@ -1,0 +1,14 @@
+replicaCount: 1
+
+image:
+  repository: bluebricks/blueprints-service
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 3000
+
+env:
+  DATABASE_HOST: postgres
+  DATABASE_NAME: bluebricks_dev

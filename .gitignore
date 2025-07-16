@@ -1,0 +1,13 @@
+# Node
+node_modules/
+dist/
+npm-debug.log*
+
+.env
+
+postgres_data/
+pgdata/
+
+.vscode/
+.idea/
+.DS_Store

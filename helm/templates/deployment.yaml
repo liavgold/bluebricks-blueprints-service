@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blueprint-service
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: blueprint-service
+  template:
+    metadata:
+      labels:
+        app: blueprint-service
+    spec:
+      containers:
+        - name: blueprint-service
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DATABASE_HOST
+              value: {{ .Values.env.DATABASE_HOST | quote }}
+            - name: DATABASE_NAME
+              value: {{ .Values.env.DATABASE_NAME | quote }}

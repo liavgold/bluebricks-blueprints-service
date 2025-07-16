@@ -1,0 +1,25 @@
+{
+    "name": "aws_neptune",
+    "version": "1.1.0",
+    "author": "bluebricks@example.com",
+    "blueprint_data": {
+      "description": "AWS Neptune Blueprint for Bluebricks",
+      "manifest_version": 1,
+      "packages": [
+        {
+          "type": "aws_neptune",
+          "name": "NeptuneCluster",
+          "version": "1.0"
+        }
+      ],
+      "props": {
+        "engine": "neptune",
+        "instance_type": "db.r5.large",
+        "region": "us-east-1"
+      },
+      "outs": {
+        "endpoint": "neptune-cluster.cluster-1234567890.us Elegant-1.neptune.amazonaws.com",
+        "arn": "arn:aws:neptune:us-east-1:123456789012:cluster:neptune-cluster"
+      }
+    }
+  }
