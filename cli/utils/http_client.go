@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -28,5 +29,14 @@ func SendRequest(method, url string, body []byte) ([]byte, error) {
 		return nil, fmt.Errorf("failed to read response: %w", err)
 	}
 
-	return responseData, nil
+	if resp.StatusCode >= 400 {
+		return nil, fmt.Errorf("HTTP %d: %s", resp.StatusCode, responseData)
+	}
+
+	var prettyJSON bytes.Buffer
+	if err := json.Indent(&prettyJSON, responseData, "", "  "); err != nil {
+		return responseData, nil // fallback
+	}
+
+	return prettyJSON.Bytes(), nil
 }

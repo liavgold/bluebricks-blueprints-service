@@ -1,9 +1,8 @@
 package commands
 
 import (
+	"bluebricks-cli/utils"
 	"fmt"
-	"io"
-	"net/http"
 
 	"github.com/spf13/cobra"
 )
@@ -13,16 +12,18 @@ func ListCommand(apiURL *string) *cobra.Command {
 		Use:   "list",
 		Short: "List all blueprints",
 		Run: func(cmd *cobra.Command, args []string) {
-			resp, err := http.Get(*apiURL + "/blueprints")
+			url := fmt.Sprintf("%s/blueprints", *apiURL)
+
+			resp, err := utils.SendRequest("GET", url, nil)
 			if err != nil {
-				fmt.Println("Error sending request:", err)
+				fmt.Println("Error listing blueprints:", err)
 				return
 			}
-			defer resp.Body.Close()
 
-			body, _ := io.ReadAll(resp.Body)
-			fmt.Println(string(body))
+			fmt.Println("All Blueprints:")
+			fmt.Println(string(resp))
 		},
 	}
+
 	return cmd
 }

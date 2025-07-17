@@ -1,21 +1,26 @@
 package main
 
 import (
-  "bluebricks-cli/commands"
-  "github.com/spf13/cobra"
+	"bluebricks-cli/commands"
+	"github.com/spf13/cobra"
 )
 
 func main() {
-  rootCmd := &cobra.Command{Use: "cli"}
+	var apiURL string
 
-  apiURL := "http://localhost:3000"
-  rootCmd.AddCommand(
-    commands.CreateCommand(&apiURL),
-    commands.GetCommand(&apiURL),
-    commands.ListCommand(&apiURL),
-    commands.UpdateCommand(&apiURL),
-    commands.DeleteCommand(&apiURL),
-  )
+	rootCmd := &cobra.Command{
+		Use:   "cli",
+		Short: "Blueprints CLI for Bluebricks",
+	}
+	rootCmd.PersistentFlags().StringVar(&apiURL, "url", "http://localhost:3000", "API base URL")
 
-  rootCmd.Execute()
+	rootCmd.AddCommand(
+		commands.CreateCommand(&apiURL),
+		commands.GetCommand(&apiURL),
+		commands.ListCommand(&apiURL),
+		commands.UpdateCommand(&apiURL),
+		commands.DeleteCommand(&apiURL),
+	)
+
+	rootCmd.Execute()
 }

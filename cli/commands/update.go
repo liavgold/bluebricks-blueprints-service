@@ -1,10 +1,8 @@
 package commands
 
 import (
-	"bytes"
+	"bluebricks-cli/utils"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -24,29 +22,22 @@ func UpdateCommand(apiURL *string) *cobra.Command {
 				return
 			}
 
-			client := &http.Client{}
-			req, err := http.NewRequest(http.MethodPut, *apiURL+"/blueprints/"+id, bytes.NewBuffer(data))
+			url := fmt.Sprintf("%s/blueprints/%s", *apiURL, id)
+			resp, err := utils.SendRequest("PUT", url, data)
 			if err != nil {
-				fmt.Println("Error creating request:", err)
+				fmt.Println("Error updating blueprint:", err)
 				return
 			}
-			req.Header.Set("Content-Type", "application/json")
 
-			resp, err := client.Do(req)
-			if err != nil {
-				fmt.Println("Error sending request:", err)
-				return
-			}
-			defer resp.Body.Close()
-
-			body, _ := io.ReadAll(resp.Body)
-			fmt.Println(string(body))
+			fmt.Println("✅ Blueprint updated:")
+			fmt.Println(string(resp))
 		},
 	}
 
-	cmd.Flags().StringVarP(&id, "id", "i", "", "Blueprint ID")
-	cmd.Flags().StringVarP(&filePath, "file", "f", "", "Path to updated blueprint JSON file")
+	cmd.Flags().StringVarP(&id, "id", "i", "", "ID of the blueprint")
+	cmd.Flags().StringVarP(&filePath, "file", "f", "", "Path to updated blueprint JSON")
 	cmd.MarkFlagRequired("id")
 	cmd.MarkFlagRequired("file")
+
 	return cmd
 }

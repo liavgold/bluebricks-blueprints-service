@@ -1,41 +1,39 @@
 package commands
 
 import (
-  "bytes"
-  "fmt"
-  "io"
-  "net/http"
-  "os"
+	"bluebricks-cli/utils"
+	"fmt"
+	"os"
 
-  "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 )
 
 func CreateCommand(apiURL *string) *cobra.Command {
-  var filePath string
+	var filePath string
 
-  cmd := &cobra.Command{
-    Use:   "create",
-    Short: "Create a new blueprint",
-    Run: func(cmd *cobra.Command, args []string) {
-      data, err := os.ReadFile(filePath)
-      if err != nil {
-        fmt.Println("Error reading file:", err)
-        return
-      }
+	cmd := &cobra.Command{
+		Use:   "create",
+		Short: "Create a new blueprint",
+		Run: func(cmd *cobra.Command, args []string) {
+			data, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Println("Error reading file:", err)
+				return
+			}
 
-      resp, err := http.Post(*apiURL, "application/json", bytes.NewBuffer(data))
-      if err != nil {
-        fmt.Println("Error sending request:", err)
-        return
-      }
-      defer resp.Body.Close()
+			resp, err := utils.SendRequest("POST", *apiURL+"/blueprints", data)
+			if err != nil {
+				fmt.Println("Error creating blueprint:", err)
+				return
+			}
 
-      body, _ := io.ReadAll(resp.Body)
-      fmt.Println(string(body))
-    },
-  }
+			fmt.Println("Blueprint created:")
+			fmt.Println(string(resp))
+		},
+	}
 
-  cmd.Flags().StringVarP(&filePath, "file", "f", "", "Path to bricks.json")
-  cmd.MarkFlagRequired("file")
-  return cmd
+	cmd.Flags().StringVarP(&filePath, "file", "f", "", "Path to bricks.json")
+	cmd.MarkFlagRequired("file")
+
+	return cmd
 }

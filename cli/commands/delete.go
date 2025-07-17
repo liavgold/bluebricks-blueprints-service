@@ -1,9 +1,8 @@
 package commands
 
 import (
+	"bluebricks-cli/utils"
 	"fmt"
-	"io"
-	"net/http"
 
 	"github.com/spf13/cobra"
 )
@@ -13,28 +12,23 @@ func DeleteCommand(apiURL *string) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "delete",
-		Short: "Delete a blueprint by ID",
+		Short: "Delete a blueprint",
 		Run: func(cmd *cobra.Command, args []string) {
-			client := &http.Client{}
-			req, err := http.NewRequest(http.MethodDelete, *apiURL+"/blueprints/"+id, nil)
+			url := fmt.Sprintf("%s/blueprints/%s", *apiURL, id)
+
+			resp, err := utils.SendRequest("DELETE", url, nil)
 			if err != nil {
-				fmt.Println("Error creating request:", err)
+				fmt.Println("Error deleting blueprint:", err)
 				return
 			}
 
-			resp, err := client.Do(req)
-			if err != nil {
-				fmt.Println("Error sending request:", err)
-				return
-			}
-			defer resp.Body.Close()
-
-			body, _ := io.ReadAll(resp.Body)
-			fmt.Println(string(body))
+			fmt.Println("Blueprint deleted:")
+			fmt.Println(string(resp))
 		},
 	}
 
-	cmd.Flags().StringVarP(&id, "id", "i", "", "Blueprint ID")
+	cmd.Flags().StringVarP(&id, "id", "i", "", "ID of the blueprint")
 	cmd.MarkFlagRequired("id")
+
 	return cmd
 }

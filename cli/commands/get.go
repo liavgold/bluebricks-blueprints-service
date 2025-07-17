@@ -1,9 +1,8 @@
 package commands
 
 import (
+	"bluebricks-cli/utils"
 	"fmt"
-	"io"
-	"net/http"
 
 	"github.com/spf13/cobra"
 )
@@ -13,21 +12,23 @@ func GetCommand(apiURL *string) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "get",
-		Short: "Retrieve a blueprint by ID",
+		Short: "Get a blueprint by ID",
 		Run: func(cmd *cobra.Command, args []string) {
-			resp, err := http.Get(*apiURL + "/blueprints/" + id)
+			url := fmt.Sprintf("%s/blueprints/%s", *apiURL, id)
+
+			resp, err := utils.SendRequest("GET", url, nil)
 			if err != nil {
-				fmt.Println("Error sending request:", err)
+				fmt.Println("Error retrieving blueprint:", err)
 				return
 			}
-			defer resp.Body.Close()
 
-			body, _ := io.ReadAll(resp.Body)
-			fmt.Println(string(body))
+			fmt.Println("Blueprint details:")
+			fmt.Println(string(resp))
 		},
 	}
 
-	cmd.Flags().StringVarP(&id, "id", "i", "", "Blueprint ID")
+	cmd.Flags().StringVarP(&id, "id", "i", "", "ID of the blueprint")
 	cmd.MarkFlagRequired("id")
+
 	return cmd
 }
